@@ -41,6 +41,16 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  List<Map<String, dynamic>> _items = [];
+
+  //* reference to the box
+  final _myBox = Hive.box('myBox');
+
+  Future<void> _createItem(Map<String, dynamic> newItem) async {
+    await _myBox.add(newItem);
+    print("length is ${_myBox.length}");
+  }
+
   void _showForm(BuildContext ctx, int? itemKey) async {
     showModalBottomSheet(
       context: ctx,
@@ -74,6 +84,11 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
+                _createItem({
+                  'name': _nameController.text,
+                  'quantity': _quantityController.text,
+                });
+
                 //* clear the text fields
                 _nameController.clear();
                 _quantityController.clear();
