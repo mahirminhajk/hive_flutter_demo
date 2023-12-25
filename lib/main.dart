@@ -43,6 +43,12 @@ class _HomePageState extends State<HomePage> {
 
   List<Map<String, dynamic>> _items = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _refreshItem();
+  }
+
   //* reference to the box
   final _myBox = Hive.box('myBox');
 
@@ -135,6 +141,22 @@ class _HomePageState extends State<HomePage> {
             child: ListTile(
               title: Text(currentItem['name']),
               subtitle: Text(currentItem['quantity'].toString()),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _showForm(context, currentItem['key']),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      await _myBox.delete(currentItem['key']);
+                      _refreshItem();
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         },
