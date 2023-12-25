@@ -75,6 +75,18 @@ class _HomePageState extends State<HomePage> {
     _refreshItem();
   }
 
+  Future<void> _deleteItem(int itemKey) async {
+    await _myBox.delete(itemKey);
+    _refreshItem();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('An item has been deleted'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+  }
+
   void _showForm(BuildContext ctx, int? itemKey) async {
     if (itemKey != null) {
       final item = _myBox.get(itemKey);
@@ -170,10 +182,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                      await _myBox.delete(currentItem['key']);
-                      _refreshItem();
-                    },
+                    onPressed: () => _deleteItem(currentItem['key']),
                   ),
                 ],
               ),
