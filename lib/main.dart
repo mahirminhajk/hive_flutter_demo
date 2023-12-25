@@ -70,7 +70,18 @@ class _HomePageState extends State<HomePage> {
     _refreshItem();
   }
 
+  Future<void> _updateItem(int itemKey, Map<String, dynamic> item) async {
+    await _myBox.put(itemKey, item);
+    _refreshItem();
+  }
+
   void _showForm(BuildContext ctx, int? itemKey) async {
+    if (itemKey != null) {
+      final item = _myBox.get(itemKey);
+      _nameController.text = item['name'];
+      _quantityController.text = item['quantity'].toString();
+    }
+
     showModalBottomSheet(
       context: ctx,
       elevation: 5,
@@ -103,10 +114,17 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
-                _createItem({
-                  'name': _nameController.text,
-                  'quantity': _quantityController.text,
-                });
+                if (itemKey != null) {
+                  await _updateItem(itemKey, {
+                    'name': _nameController.text,
+                    'quantity': int.parse(_quantityController.text),
+                  });
+                } else {
+                  await _createItem({
+                    'name': _nameController.text,
+                    'quantity': int.parse(_quantityController.text),
+                  });
+                }
 
                 //* clear the text fields
                 _nameController.clear();
@@ -114,7 +132,9 @@ class _HomePageState extends State<HomePage> {
                 //* close the bottom sheet
                 Navigator.of(context).pop();
               },
-              child: const Text('Create New'),
+              child: Text(
+                itemKey != null ? 'Update' : 'Create new',
+              ),
             ),
             const SizedBox(height: 10),
           ],
