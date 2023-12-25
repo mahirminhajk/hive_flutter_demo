@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
-  void showForm(BuildContext ctx, int? itemKey) async {
+  void _showForm(BuildContext ctx, int? itemKey) async {
     showModalBottomSheet(
       context: ctx,
       elevation: 5,
@@ -56,7 +56,34 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [],
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name',
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _quantityController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                hintText: 'Quantity',
+              ),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                //* clear the text fields
+                _nameController.clear();
+                _quantityController.clear();
+                //* close the bottom sheet
+                Navigator.of(context).pop();
+              },
+              child: const Text('Create New'),
+            ),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
     );
@@ -70,7 +97,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.blue,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => null,
+        onPressed: () => _showForm(context, null),
         child: const Icon(Icons.add),
       ),
     );
