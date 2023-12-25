@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowMaterialGrid: false,
+        debugShowCheckedModeBanner: false,
         title: 'Hive CRUD Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -46,9 +46,22 @@ class _HomePageState extends State<HomePage> {
   //* reference to the box
   final _myBox = Hive.box('myBox');
 
+  //* refreshItems
+  void _refreshItem() {
+    final data = _myBox.keys.map((key) {
+      final item = _myBox.get(key);
+      return {"key": key, "name": item["name"], "quantity": item["quantity"]};
+    }).toList();
+
+    setState(() {
+      _items = data.reversed.toList();
+      print(_items);
+    });
+  }
+
   Future<void> _createItem(Map<String, dynamic> newItem) async {
     await _myBox.add(newItem);
-    print("length is ${_myBox.length}");
+    _refreshItem();
   }
 
   void _showForm(BuildContext ctx, int? itemKey) async {
@@ -110,6 +123,21 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Hive CRUD Demo'),
         backgroundColor: Colors.blue,
+      ),
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (_, index) {
+          final currentItem = _items[index];
+          return Card(
+            color: Colors.orange.shade100,
+            margin: const EdgeInsets.all(10),
+            elevation: 3,
+            child: ListTile(
+              title: Text(currentItem['name']),
+              subtitle: Text(currentItem['quantity'].toString()),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(context, null),
